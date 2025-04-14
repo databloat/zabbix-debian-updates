@@ -113,6 +113,23 @@ Commands:
 ```bash
 nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 ```
+## 📦 Zabbix Items Overview
+
+| Name                      | Key                                         | Triggers | Description                                           |
+|---------------------------|---------------------------------------------|----------|-------------------------------------------------------|
+| Available Package Updates | `debian.package.updates`                   | 1        | Shows the number of available system package updates. |
+| Available Security Updates| `debian.security.updates`                  | 1        | Shows the number of available **security** updates.   |
+| Reboot Required           | `vfs.file.exists[/var/run/reboot-required]`| 1        | 🔄 Checks if a reboot is required after updates.       |
+
+## 🚨 Zabbix Trigger Overview
+
+| Severity | Name                                                  | Expression                                                                 |
+|----------|-------------------------------------------------------|----------------------------------------------------------------------------|
+| Average  | Reboot required to finish updates on `{HOST.NAME}`    | `last(/Linux Package Updates/vfs.file.exists[/var/run/reboot-required])>0`|
+| Warning  | There are `{ITEM.LASTVALUE}` package updates available on `{HOST.NAME}` | `last(/Linux Package Updates/debian.package.updates)>0`|
+| Warning  | There are `{ITEM.LASTVALUE}` security updates available on `{HOST.NAME}` | `last(/Linux Package Updates/debian.security.updates)>0`|
+
+
 ## 📂 Log Output
 
 All output is logged to:
