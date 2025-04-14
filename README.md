@@ -64,8 +64,10 @@ Import the provided Zabbix template XML file into your Zabbix frontend. Assign t
 
 ### 5. Create Script in Zabbix Frontend
 
-In the Zabbix frontend, navigate to:
-Administration → Scripts → Create Script
+In the Zabbix frontend:
+
+- For version **7.0 and above**: go to **Alerts → Scripts → Create script**
+- For versions **below 7.0**: go to **Administration → Scripts → Create Script**
 
 Configure the script with the following settings:
 - Name: Run APT Update Script
