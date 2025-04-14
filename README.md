@@ -20,6 +20,7 @@ This project provides a script and configuration for checking available package 
 
 - 🔍 **Check for available package updates**
 - 🔐 **Detect available security updates**
+- 🔄 **Checks if a system reboot is required after updates**
 - 🚨 **Trigger Zabbix problems if updates are found**
 - 📄 **Log all actions to `/var/log/zabbix/zbx_remote_update.log`**
 - 🧪 **Runs updates and cleanup in background (preparation for auto-update)**
