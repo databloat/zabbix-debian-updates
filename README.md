@@ -21,6 +21,16 @@ This project provides a script and configuration for checking available package 
   - Improved and more verbose logfile structure
 
 ---
+> ⚠️ **Warning for target systems running Docker**
+>
+> The script triggers system updates via manual Zabbix actions.  
+> If the target system is running Docker (e.g., PostgresSQL or other databases in Docker),  
+> be aware that system updates might **restart or stop Docker services**.  
+> This can cause **data loss or corruption**, especially if containers are not gracefully stopped  
+> or if critical services run within Docker.  
+>
+> **Review and adjust the update behavior carefully** before applying it to systems with Docker.
+
 
 ## ⚙️ Installation
 
