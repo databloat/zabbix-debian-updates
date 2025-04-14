@@ -1,0 +1,1 @@
+zabbix ALL=(ALL) NOPASSWD: /usr/bin/apt update, /usr/bin/apt full-upgrade -y, /usr/bin/apt autoremove --purge -y, /usr/bin/apt autoclean -y, /sbin/reboot
