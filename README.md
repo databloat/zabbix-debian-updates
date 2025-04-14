@@ -56,9 +56,9 @@ This script and template were tested with the following environments:
 - 7.0 LTS
 - 7.2 (latest tested version)
 
-## ⚙️ Setup
+## ⚙️ Setup 
 
-### 1. Script Setup
+### 1. Script Setup (On Client)
 
 Create the script directory:
 
