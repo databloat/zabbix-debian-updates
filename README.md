@@ -32,7 +32,7 @@ This project provides a script and configuration for checking available package 
 > **Review and adjust the update behavior carefully** before applying it to systems with Docker.
 
 
-## ⚙️ Installation
+## ⚙️ Installation on Zabbix Agent Site
 
 ### 1. Script Setup
 
