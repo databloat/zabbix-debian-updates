@@ -19,6 +19,7 @@ This project provides a script and configuration for checking available package 
 - 🔜 **Planned**:
   - Automatic package updates via Zabbix
   - Improved and more verbose logfile structure
+  - Auto-setup script for one-touch configuration
 
 ---
 > ⚠️ **Warning for target systems running Docker**
@@ -31,6 +32,20 @@ This project provides a script and configuration for checking available package 
 >
 > **Review and adjust the update behavior carefully** before applying it to systems with Docker.
 
+## 🧩 Compatibility & Requirements
+
+This script and template were tested with the following environments:
+
+**Client systems (monitored hosts):**
+- Debian 12
+- Ubuntu 22.04 LTS
+- Ubuntu 23.04 LTS
+- Ubuntu 24.04 LTS
+
+**Zabbix server versions:**
+- 6.0 LTS
+- 7.0 LTS
+- 7.2 (latest tested version)
 
 ## ⚙️ Installation on Zabbix Agent Site
 
