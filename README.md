@@ -8,6 +8,14 @@ This project provides a script and configuration for checking available package 
 
 ---
 
+## 📚 Table of Contents
+
+- [📦 Features](#-features)
+- [🧩 Compatibility & Requirements](#-compatibility--requirements)
+- [⚙️ Setup](#-setup)
+- [📂 Log Output](#-log-output)
+- [📌 Notes](#-notes)
+
 ## 📦 Features
 
 - 🔍 **Check for available package updates**
@@ -47,7 +55,7 @@ This script and template were tested with the following environments:
 - 7.0 LTS
 - 7.2 (latest tested version)
 
-## ⚙️ Installation on Zabbix Agent Site
+## ⚙️ Setup
 
 ### 1. Script Setup
 
@@ -123,6 +131,5 @@ The logfile is owned by zabbix:zabbix
 
 ## 📌 Notes
 - Ensure the zabbix user has passwordless sudo access only to necessary commands.
-- Tested on Debian 12 and Ubuntu 22.04 with Zabbix Server Zabbix 7.2.x / 6.0 LTS
 - Uses apt full-upgrade, so it can also install kernel and system updates.
 
