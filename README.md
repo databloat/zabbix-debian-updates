@@ -58,11 +58,11 @@ Restart the Zabbix Agent:
 sudo systemctl restart zabbix-agent2
 ```
 
-### Import Zabbix Template
+### 4. Import Zabbix Template
 
 Import the provided Zabbix template XML file into your Zabbix frontend. Assign the template to the desired hosts.
 
-### Create Script in Zabbix Frontend
+### 5. Create Script in Zabbix Frontend
 
 In the Zabbix frontend, navigate to:
 Administration → Scripts → Create Script
