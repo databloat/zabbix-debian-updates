@@ -70,14 +70,14 @@ In the Zabbix frontend:
 - For versions **below 7.0**: go to **Administration → Scripts → Create Script**
 
 Configure the script with the following settings:
-- Name: Run APT Update Script
+- Name: Debian Full Update
+- Scope: Manual host action
 - Type: Script
-- Execute on: Agent
-- User permissions: Select the appropriate Zabbix user groups
+- Execute on: Zabbix agent
 
 Commands:
 ```bash
-/etc/zabbix/scripts/zbx_remote_update.sh
+nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 ```
 ## 📂 Log Output
 
