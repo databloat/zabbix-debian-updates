@@ -13,6 +13,10 @@
             <template>Linux Package Updates</template>
             <name>Linux Package Updates</name>
             <description>https://github.com/databloat/zabbix-debian-updates</description>
+            <vendor>
+                <name>databloat</name>
+                <version>7.2-2</version>
+            </vendor>
             <groups>
                 <group>
                     <name>Templates/Operating systems</name>
