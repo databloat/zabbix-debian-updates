@@ -78,6 +78,10 @@ Do you want to use Zabbix Agent 2? (y/N):
 Do you want to start the template configuration now? (y/N): y
 ```
 
+### 4. Zabbix Server configuration
+
+For Server configuration follw 4. Import Zabbix Template under Manual Setup
+
 ## ⚙️ Manual Setup 
 
 ### 1. Script Setup (On Client)
