@@ -1,20 +1,9 @@
-> ⚠️ **This project is still under development.**
-> While mostly stable, some features may not yet be complete or fully tested.
-
-# Zabbix APT Update Manager
+# Zabbix Debian APT Update Manager
 
 Monitor and manage APT updates on **Debian/Ubuntu** systems using Zabbix.  
 This project provides a script and configuration for checking available package and security updates and triggering alerts in Zabbix.
 
 ---
-
-## 📚 Table of Contents
-
-- [📦 Features](#-features)
-- [🧩 Compatibility & Requirements](#-compatibility--requirements)
-- [⚙️ Setup](#-setup)
-- [📂 Log Output](#-log-output)
-- [📌 Notes](#-notes)
 
 ## 📦 Features
 
@@ -25,10 +14,10 @@ This project provides a script and configuration for checking available package 
 - 📄 **Log all actions to `/var/log/zabbix/zbx_remote_update.log`**
 - 🧪 **Runs updates and cleanup in background (preparation for auto-update)**
 - 📦 **Performs `apt update`, `full-upgrade`, `autoremove`, and `autoclean`**
+- ⚙️ **One-Touch Configuration via script**
 - 🔜 **Planned**:
   - Automatic package updates via Zabbix
   - Improved and more verbose logfile structure
-  - Auto-setup script for one-touch configuration
 
 ---
 > ⚠️ **Warning for target systems running Docker**
@@ -54,9 +43,42 @@ This script and template were tested with the following environments:
 **Zabbix server versions:**
 - 6.0 LTS
 - 7.0 LTS
-- 7.2 (latest tested version)
+- 7.2 
+- 7.4 (latest tested version)
 
-## ⚙️ Setup 
+## ⚙️ Auto Script Setup
+
+### 1. Clone the Repository
+Run the following command on the target system:
+
+```bash
+git clone https://github.com/databloat/zabbix-debian-updates.git
+```
+
+### 2. Prepare the Installer Script
+Navigate to the project directory and make the script executable:
+
+```bash
+cd zabbix-debian-updates
+chmod +x template_debian-updates_installer.sh
+```
+
+### 3. Run the Installer
+Execute the script and follow the on-screen instructions:
+
+```bash
+./template_debian-updates_installer.sh
+```
+
+Example prompts during execution:
+
+```bash
+Zabbix Template "Linux Package Updates" Installer v1.2
+Do you want to use Zabbix Agent 2? (y/N):
+Do you want to start the template configuration now? (y/N): y
+```
+
+## ⚙️ Manual Setup 
 
 ### 1. Script Setup (On Client)
 
