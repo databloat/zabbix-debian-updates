@@ -1,54 +1,85 @@
 #!/bin/bash
+#
+# Zabbix Remote Update Script for Debian Systems v2 - by databloat
+# Github: https://github.com/databloat
+#
+# Performs system updates and logs all actions
 
-# Log file location
-LOG_FILE="/var/log/zabbix/zbx_remote_update.log"
+set -euo pipefail
 
-# Ensure the log directory exists
-mkdir -p /var/log/zabbix
-chown zabbix:zabbix /var/log/zabbix
+# Conf Path
+readonly LOG_DIR="/var/log/zabbix"
+readonly LOG_FILE="/var/log/zabbix/zbx_remote_update.log"
+readonly STATUS_FILE="/var/log/zabbix/zbx_update_status"
 
-# Log function to write to the log file
+# Check Log dir
+if [[ ! -d "$LOG_DIR" ]]; then
+    mkdir -p "$LOG_DIR"
+    chown zabbix:zabbix "$LOG_DIR"
+fi
+
+################## Functions ###########################
+
 log() {
-    echo "$(date '+%Y-%m-%d %H:%M:%S') - $(whoami) - $1" >> "$LOG_FILE"
+    local level="${2:-INFO}"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - [${level}] - $(whoami) - $1" >> "$LOG_FILE"
 }
 
-# Start the script in the background
-{
-    # Log the start of the script execution
-    log "Script started"
+error_exit() {
+    log "ERROR: $1" "ERROR"
+    echo "1" > "$STATUS_FILE"
+    exit 1
+}
 
+write_success() {
+    echo "0" > "$STATUS_FILE"
+}
+
+main() {
+    log "=== Script started ===" "INFO"
+    
+    export DEBIAN_FRONTEND=noninteractive
+    export DEBIAN_PRIORITY=critical
+    
     # Update package lists
-    log "Running: sudo apt update"
-    sudo apt update >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
-        log "ERROR: 'apt update' failed"
-        exit 1
+    log "Updating package lists..."
+    if sudo apt-get update >> "$LOG_FILE" 2>&1; then
+        log "Package lists updated successfully"
+    else
+        error_exit "apt-get update failed"
     fi
-
-    # Perform a full upgrade
-    log "Running: sudo apt full-upgrade -y"
-    sudo apt full-upgrade -y >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
-        log "ERROR: 'apt full-upgrade' failed"
-        exit 1
+    
+    # Perform full upgrade
+    log "Performing full system upgrade..."
+    if sudo apt-get full-upgrade -y --simulate \
+        -o Dpkg::Options::="--force-confdef" \
+        -o Dpkg::Options::="--force-confold" \
+        >> "$LOG_FILE" 2>&1; then
+        log "System upgrade completed successfully"
+    else
+        error_exit "apt-get full-upgrade failed"
     fi
-
-    # Clean up unused packages and configuration files
-    log "Running: sudo apt autoremove --purge -y"
-    sudo apt autoremove --purge -y >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
-        log "ERROR: 'apt autoremove --purge' failed"
-        exit 1
+    
+    # Remove unused packages
+    log "Removing unused packages..."
+    if sudo apt-get autoremove --purge -y --simulate >> "$LOG_FILE" 2>&1; then
+        log "Unused packages removed successfully"
+    else
+        log "apt-get autoremove failed (non-critical)" "WARN"
     fi
-
-    # Clean up cached package files
-    log "Running: sudo apt autoclean -y"
-    sudo apt autoclean -y >> "$LOG_FILE" 2>&1
-    if [ $? -ne 0 ]; then
-        log "ERROR: 'apt autoclean' failed"
-        exit 1
+    
+    # Clean package cache
+    log "Cleaning package cache..."
+    if sudo apt-get autoclean -y --simulate >> "$LOG_FILE" 2>&1; then
+        log "Package cache cleaned successfully"
+    else
+        log "apt-get autoclean failed (non-critical)" "WARN"
     fi
+    
+    log "=== Script completed successfully ===" "INFO"
+    write_success
+    return 0
+}
 
-    # Log the successful completion of the script
-    log "Script completed successfully"
-} &
+# main function in background mode
+main &
