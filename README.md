@@ -132,7 +132,7 @@ nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 Last remote Update state:
 
 ```bash
-/var/log/zabbix/zbx_update_state
+/var/log/zabbix/zbx_update_status
 ```
 
 All output is logged to:
