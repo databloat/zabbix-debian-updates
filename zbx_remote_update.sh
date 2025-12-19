@@ -51,7 +51,7 @@ main() {
     
     # Perform full upgrade
     log "Performing full system upgrade..."
-    if sudo apt-get full-upgrade -y --simulate \
+    if sudo apt-get full-upgrade -y \
         -o Dpkg::Options::="--force-confdef" \
         -o Dpkg::Options::="--force-confold" \
         >> "$LOG_FILE" 2>&1; then
@@ -62,7 +62,7 @@ main() {
     
     # Remove unused packages
     log "Removing unused packages..."
-    if sudo apt-get autoremove --purge -y --simulate >> "$LOG_FILE" 2>&1; then
+    if sudo apt-get autoremove --purge -y >> "$LOG_FILE" 2>&1; then
         log "Unused packages removed successfully"
     else
         log "apt-get autoremove failed (non-critical)" "WARN"
@@ -70,7 +70,7 @@ main() {
     
     # Clean package cache
     log "Cleaning package cache..."
-    if sudo apt-get autoclean -y --simulate >> "$LOG_FILE" 2>&1; then
+    if sudo apt-get autoclean -y >> "$LOG_FILE" 2>&1; then
         log "Package cache cleaned successfully"
     else
         log "apt-get autoclean failed (non-critical)" "WARN"
