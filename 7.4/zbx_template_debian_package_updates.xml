@@ -29,6 +29,7 @@
                     <key>debian.package.updates</key>
                     <delay>30m</delay>
                     <history>90d</history>
+                    <timeout>10s</timeout>
                     <tags>
                         <tag>
                             <tag>component</tag>
@@ -55,6 +56,7 @@
                     <key>debian.security.updates</key>
                     <delay>30m</delay>
                     <history>90d</history>
+                    <timeout>10s</timeout>
                     <tags>
                         <tag>
                             <tag>component</tag>
@@ -72,6 +74,20 @@
                             <name>There are {ITEM.LASTVALUE} security updates available on {HOST.NAME}</name>
                             <opdata>{ITEM.LASTVALUE}</opdata>
                             <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>7e1ad602d9cb4fe196be8fbfb12fdc33</uuid>
+                    <name>Last Full-Update State</name>
+                    <key>vfs.file.contents[/var/log/zabbix/zbx_update_status]</key>
+                    <value_type>TEXT</value_type>
+                    <triggers>
+                        <trigger>
+                            <uuid>883757a8ad084c5a881be2d1389269fa</uuid>
+                            <expression>last(/Debian Package Updates/vfs.file.contents[/var/log/zabbix/zbx_update_status])=1</expression>
+                            <name>Remote update failed on {HOST.NAME} (Check the log at /var/log/zabbix/zbx_remote_update.log)</name>
+                            <priority>DISASTER</priority>
                         </trigger>
                     </triggers>
                 </item>
