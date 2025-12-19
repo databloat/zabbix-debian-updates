@@ -19,6 +19,7 @@ zabbix_export:
           key: debian.package.updates
           delay: 30m
           history: 90d
+          timeout: 10s
           tags:
             - tag: component
               value: application
@@ -35,6 +36,7 @@ zabbix_export:
           key: debian.security.updates
           delay: 30m
           history: 90d
+          timeout: 10s
           tags:
             - tag: component
               value: application
@@ -46,6 +48,15 @@ zabbix_export:
               name: 'There are {ITEM.LASTVALUE} security updates available on {HOST.NAME}'
               opdata: '{ITEM.LASTVALUE}'
               priority: WARNING
+        - uuid: 7e1ad602d9cb4fe196be8fbfb12fdc33
+          name: 'Last Full-Update State'
+          key: 'vfs.file.contents[/var/log/zabbix/zbx_update_status]'
+          value_type: TEXT
+          triggers:
+            - uuid: 883757a8ad084c5a881be2d1389269fa
+              expression: 'last(/Debian Package Updates/vfs.file.contents[/var/log/zabbix/zbx_update_status])=1'
+              name: 'Remote update failed on {HOST.NAME} (Check the log at /var/log/zabbix/zbx_remote_update.log)'
+              priority: DISASTER
         - uuid: a0e2bf03d7774e9da972fe433f4f0de9
           name: 'Reboot Required'
           key: 'vfs.file.exists[/var/run/reboot-required]'
