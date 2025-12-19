@@ -86,53 +86,7 @@ Zabbix Debian update template installed successfully.
 
 ```
 
-### 4. Zabbix Server configuration
-
-For Server configuration follw 4. Import Zabbix Template under Manual Setup
-
-## ⚙️ Manual Setup (Advanced)
-
-### 1. Script Setup (On Client)
-
-Create the script directory:
-
-```bash
-sudo mkdir -p /etc/zabbix/scripts
-```
-Clone the Github repo
-```bash
-git clone git clone https://github.com/databloat/zabbix-debian-updates.git
-```
-
-Copy the update script to this location:
-```bash
-cd zabbix-debian-updates
-sudo cp zbx_remote_update.sh /etc/zabbix/scripts/
-sudo chmod +x /etc/zabbix/scripts/zbx_remote_update.sh
-```
-
-### 2. Sudo Rights for Zabbix
-
-Run:
-```bash
-sudo visudo
-```
-Insert the content from the provided visudo configuration file (included in this repository) to allow the zabbix user to run APT commands without a password.
-
-### 3. Zabbix Agent Configuration
-Copy the agent configuration:
-```bash
-sudo cp 90-debian-update.conf /etc/zabbix/zabbix_agent2.d/
-```
-
-Add system.run[*] to zabbix_agent2.conf
-
-Restart the Zabbix Agent:
-```bash
-sudo systemctl restart zabbix-agent2
-```
-
-### 4. Import Zabbix Template
+### 4. Import Zabbix Template (Server)
 
 Import the provided Zabbix template XML file into your Zabbix frontend. Assign the template to the desired hosts.
 
@@ -153,6 +107,7 @@ Commands:
 ```bash
 nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 ```
+
 ## 📦 Zabbix Items Overview
 
 | Name                      | Key                                         | Triggers | Description                                           |
@@ -199,4 +154,7 @@ The logfile is owned by zabbix:zabbix
 ## 📌 Notes
 - Ensure the zabbix user has passwordless sudo access only to necessary commands.
 - Uses apt full-upgrade, so it can also install kernel and system updates.
+
+## Examples
+<img width="1067" height="61" alt="image" src="https://github.com/user-attachments/assets/bbcb02b5-897d-493f-868a-67acb47ad64f" />
 
