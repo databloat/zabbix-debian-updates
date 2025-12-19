@@ -1,23 +1,24 @@
-# Zabbix Debian APT Update Manager
+# Zabbix Remote Update Script for Debian Systems via APT
 
 Monitor and manage APT updates on **Debian/Ubuntu** systems using Zabbix.  
-This project provides a script and configuration for checking available package and security updates and triggering alerts in Zabbix.
+This project provides a script and configuration to check for package and security updates, trigger Zabbix alerts, and install updates 
+manually through Zabbix script execution.
+
+## 💬 Feedback & Issues
+
+Feedback, suggestions, and issue reports are always welcome — feel free to open an issue or contact me directly.
 
 ---
 
 ## 📦 Features
 
-- 🔍 **Check for available package updates**
-- 🔐 **Detect available security updates**
-- 🔄 **Checks if a system reboot is required after updates**
-- 🚨 **Trigger Zabbix problems if updates are found**
-- 📄 **Log all actions to `/var/log/zabbix/zbx_remote_update.log`**
-- 🧪 **Runs updates and cleanup in background (preparation for auto-update)**
-- 📦 **Performs `apt update`, `full-upgrade`, `autoremove`, and `autoclean`**
-- ⚙️ **One-Touch Configuration via script**
-- 🔜 **Planned**:
-  - Automatic package updates via Zabbix
-  - Improved and more verbose logfile structure
+- 🔍 **Check available package and security updates**  
+- 🔄 **Manually trigger updates that run automatically in the background**  
+- 🔔 **Check if a system reboot is required after updates** 
+- ⚙️ **Perform full system update: `apt update`, `full-upgrade`, `autoremove`, `autoclean`**  
+- 📄 **Log all actions and update status to `/var/log/zabbix/zbx_remote_update.log` and `/var/log/zabbix/zbx_update_status`**  
+- ⚡ **One-touch configuration for easy deployment**  
+- 🔜 **Planned enhancements:** improved logging structure and fully automated updates via Zabbix
 
 ---
 > ⚠️ **Warning for target systems running Docker**
@@ -46,7 +47,7 @@ This script and template were tested with the following environments:
 - 7.2 
 - 7.4 (latest tested version)
 
-## ⚙️ Auto Script Setup
+## ⚙️ Setup Script with autorun.sh (Easy)
 
 ### 1. Clone the Repository
 Run the following command on the target system:
@@ -60,29 +61,36 @@ Navigate to the project directory and make the script executable:
 
 ```bash
 cd zabbix-debian-updates
-chmod +x template_debian-updates_installer.sh
+chmod +x autorun.sh
 ```
 
 ### 3. Run the Installer
 Execute the script and follow the on-screen instructions:
 
 ```bash
-./template_debian-updates_installer.sh
+./autorun.sh
 ```
 
-Example prompts during execution:
+Example output during execution:
 
 ```bash
-Zabbix Template "Linux Package Updates" Installer v1.2
-Do you want to use Zabbix Agent 2? (y/N):
-Do you want to start the template configuration now? (y/N): y
+root@zabbixtest:~/dev/zbx-debian-update# ./autorun.sh 
+Zabbix Template "Debian Package Updates" Auto-Installer v1.3
+[INFO] zabbix-agent2 is installed.
+Script copied to /etc/zabbix/scripts/
+Sudoers entry for 'zabbix' user has been added.
+Configuration file copied to /etc/zabbix/zabbix_agent2.d/
+'AllowKey=system.run[*]' added to /etc/zabbix/zabbix_agent2.conf
+zabbix-agent2 restarted successfully.
+Zabbix Debian update template installed successfully.
+
 ```
 
 ### 4. Zabbix Server configuration
 
 For Server configuration follw 4. Import Zabbix Template under Manual Setup
 
-## ⚙️ Manual Setup 
+## ⚙️ Manual Setup (Advanced)
 
 ### 1. Script Setup (On Client)
 
@@ -91,8 +99,14 @@ Create the script directory:
 ```bash
 sudo mkdir -p /etc/zabbix/scripts
 ```
+Clone the Github repo
+```bash
+git clone git clone https://github.com/databloat/zabbix-debian-updates.git
+```
+
 Copy the update script to this location:
 ```bash
+cd zabbix-debian-updates
 sudo cp zbx_remote_update.sh /etc/zabbix/scripts/
 sudo chmod +x /etc/zabbix/scripts/zbx_remote_update.sh
 ```
@@ -145,6 +159,7 @@ nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 |---------------------------|---------------------------------------------|----------|-------------------------------------------------------|
 | Available Package Updates | `debian.package.updates`                   | 1        | Shows the number of available system package updates. |
 | Available Security Updates| `debian.security.updates`                  | 1        | Shows the number of available **security** updates.   |
+| Last Full-Update State    | `vfs.file.contents[/var/log/zabbix/zbx_update_status]` | 1     | Shows the last execution state of the Debian update script (0 = success, 1 = failure) |
 | Reboot Required           | `vfs.file.exists[/var/run/reboot-required]`| 1        | 🔄 Checks if a reboot is required after updates.       |
 
 ## 🚨 Zabbix Trigger Overview
@@ -152,11 +167,18 @@ nohup /etc/zabbix/scripts/zbx_remote_update.sh > /dev/null 2>&1 &
 | Severity | Name                                                  | Expression                                                                 |
 |----------|-------------------------------------------------------|----------------------------------------------------------------------------|
 | Average  | Reboot required to finish updates on `{HOST.NAME}`    | `last(/Linux Package Updates/vfs.file.exists[/var/run/reboot-required])>0`|
+| Disaster  | Remote update failed on `{HOST.NAME}` (Check the log at /var/log/zabbix/zbx_remote_update.log)    | `last(/Debian Package Updates/vfs.file.contents[/var/log/zabbix/zbx_update_status])=1`   |
 | Warning  | There are `{ITEM.LASTVALUE}` package updates available on `{HOST.NAME}` | `last(/Linux Package Updates/debian.package.updates)>0`|
 | Warning  | There are `{ITEM.LASTVALUE}` security updates available on `{HOST.NAME}` | `last(/Linux Package Updates/debian.security.updates)>0`|
 
 
 ## 📂 Log Output
+
+Last remote Update state:
+
+```bash
+/var/log/zabbix/zbx_update_state
+```
 
 All output is logged to:
 ```bash
@@ -165,8 +187,9 @@ All output is logged to:
 
 Each action is timestamped and includes the user running the command. Example log entries:
 ```bash
-2025-04-11 18:42:12 - root - Script started
-2025-04-11 18:42:13 - root - Running: sudo apt update
+2025-12-19 21:52:04 - [INFO] - zabbix - === Script started ===
+2025-12-19 21:52:04 - [INFO] - zabbix - Updating package lists...
+
 ...
 ```
 
