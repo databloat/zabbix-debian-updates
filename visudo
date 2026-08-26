@@ -1,1 +1,1 @@
-zabbix ALL=(ALL) NOPASSWD: /usr/bin/apt-get, /sbin/reboot
+zabbix ALL=(root) NOPASSWD: /etc/zabbix/scripts/zbx_remote_update.sh apply
