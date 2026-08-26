@@ -1,0 +1,149 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+  templates:
+    - uuid: 4824284a37e74db197fff7bb63fbc9d7
+      template: 'Debian Package Updates'
+      name: 'Debian Package Updates'
+      description: 'https://github.com/databloat/zabbix-debian-updates'
+      vendor:
+        name: databloat
+        version: 7.4-2
+      groups:
+        - name: 'Templates/Operating systems'
+      items:
+        - uuid: ce98eb182b894f10a539ae285f66e35f
+          name: 'Automatic Security Updates Enabled'
+          type: DEPENDENT
+          key: debian.autoupdate.enabled
+          history: 90d
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.auto_update_enabled
+          master_item:
+            key: debian.update.status
+          tags:
+            - tag: component
+              value: application
+            - tag: component
+              value: updates
+          triggers:
+            - uuid: f1f13c8cdcd54bf79d2fe1f44745e76a
+              expression: 'last(/Debian Package Updates/debian.autoupdate.enabled)=0'
+              name: 'Automatic security updates (unattended-upgrades) are disabled on {HOST.NAME}'
+              status: DISABLED
+              priority: WARNING
+        - uuid: b4c2454e21f649ac81f82b2d3aa8ed27
+          name: 'Available Normal Updates'
+          type: DEPENDENT
+          key: debian.normal.updates
+          history: 90d
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.packages_normal
+          master_item:
+            key: debian.update.status
+          tags:
+            - tag: component
+              value: application
+            - tag: component
+              value: updates
+          triggers:
+            - uuid: b830fc9cc3d647429b89c36ebf845e5f
+              expression: 'last(/Debian Package Updates/debian.normal.updates)>0'
+              name: 'There are {ITEM.LASTVALUE} non-security updates available on {HOST.NAME}'
+              opdata: '{ITEM.LASTVALUE}'
+              priority: INFO
+        - uuid: 6a6f3a9249ae4f3e9c8afd1da04e4bc5
+          name: 'Available Package Updates (total)'
+          type: DEPENDENT
+          key: debian.package.updates
+          history: 90d
+          status: DISABLED
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.packages_total
+          master_item:
+            key: debian.update.status
+          tags:
+            - tag: component
+              value: application
+            - tag: component
+              value: updates
+          triggers:
+            - uuid: 6a60cb057dac43728b0dde0a41ae7546
+              expression: 'last(/Debian Package Updates/debian.package.updates)>0'
+              name: 'There are {ITEM.LASTVALUE} package updates available on {HOST.NAME}'
+              opdata: '{ITEM.LASTVALUE}'
+              status: DISABLED
+              priority: INFO
+        - uuid: a0e2bf03d7774e9da972fe433f4f0de9
+          name: 'Reboot Required'
+          type: DEPENDENT
+          key: debian.reboot.required
+          history: 90d
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.reboot_required
+          master_item:
+            key: debian.update.status
+          tags:
+            - tag: component
+              value: application
+            - tag: component
+              value: updates
+          triggers:
+            - uuid: 834aa9b0fa3c40518b6934e958797b38
+              expression: 'last(/Debian Package Updates/debian.reboot.required)>0'
+              name: 'Reboot required to finish updates on {HOST.NAME}'
+              priority: AVERAGE
+        - uuid: a2a8d323bc744533b5e99f665d065add
+          name: 'Available Security Updates'
+          type: DEPENDENT
+          key: debian.security.updates
+          history: 90d
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.packages_security
+          master_item:
+            key: debian.update.status
+          tags:
+            - tag: component
+              value: application
+            - tag: component
+              value: updates
+          triggers:
+            - uuid: 620b1ebbb283484181f0777dac6ed818
+              expression: 'last(/Debian Package Updates/debian.security.updates)>0'
+              name: 'There are {ITEM.LASTVALUE} security updates available on {HOST.NAME}'
+              opdata: '{ITEM.LASTVALUE}'
+              priority: AVERAGE
+        - uuid: 6002aa2838044dd5b329dff6ba7be7d8
+          name: 'Debian Update Status (raw)'
+          key: debian.update.status
+          delay: 30m
+          history: '0'
+          value_type: TEXT
+          description: 'Raw JSON from the collector script (zbx_remote_update.sh check). Master item for the dependent items below - not intended for direct alerting.'
+          timeout: 30s
+        - uuid: 7e1ad602d9cb4fe196be8fbfb12fdc33
+          name: 'Last Full-Update State'
+          key: 'vfs.file.contents[/var/log/zabbix/zbx_update_status]'
+          value_type: TEXT
+          triggers:
+            - uuid: 883757a8ad084c5a881be2d1389269fa
+              expression: 'last(/Debian Package Updates/vfs.file.contents[/var/log/zabbix/zbx_update_status])=1'
+              name: 'Remote update failed on {HOST.NAME} (Check log at /var/log/zabbix/zbx_remote_update.log)'
+              priority: DISASTER
+      tags:
+        - tag: class
+          value: os
+        - tag: target
+          value: linux
