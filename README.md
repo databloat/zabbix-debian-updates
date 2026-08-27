@@ -130,4 +130,5 @@ Each entry is timestamped with the executing user:
 Log directory is owned by `zabbix:zabbix`
 
 ## Examples
-<img width="1067" height="61" alt="image" src="https://github.com/user-attachments/assets/bbcb02b5-897d-493f-868a-67acb47ad64f" />
+<img width="1248" height="71" alt="image" src="https://github.com/user-attachments/assets/ef57949c-2917-4006-b5b9-9ac26ebaa0b0" />
+
