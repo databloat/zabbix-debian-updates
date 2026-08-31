@@ -86,6 +86,9 @@ print_success "Configuration file copied to $AGENT_CONF_DIR/"
 
 #  Check for Include=
 if ! grep -qE "^[[:space:]]*Include=${AGENT_CONF_DIR}" "$AGENT_CONF" 2>/dev/null; then
+  if [[ -s "$AGENT_CONF" ]] && [[ "$(tail -c1 "$AGENT_CONF" | wc -l)" -eq 0 ]]; then
+    echo | sudo tee -a "$AGENT_CONF" >/dev/null
+  fi
   echo "Include=${AGENT_CONF_DIR}/*.conf" | sudo tee -a "$AGENT_CONF" >/dev/null
   print_success "Added 'Include=${AGENT_CONF_DIR}/*.conf' to $AGENT_CONF"
 else
